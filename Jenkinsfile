@@ -1,39 +1,33 @@
-pipeline {
-    agent { label "dev-server"}
+pipeline{
+    agent any
     
-    stages {
-        
+    stages{
         stage("code"){
             steps{
-                git url: "https://github.com/LondheShubham153/node-todo-cicd.git", branch: "master"
-                echo 'bhaiyya code clone ho gaya'
+                git url: "https://github.com/VedThavkar/node-todo-cicd.git"
+                echo "Code cloned"
             }
         }
         stage("build and test"){
             steps{
-                sh "docker build -t node-app-test-new ."
-                echo 'code build bhi ho gaya'
+                sh "docker build -t node-app ."
+                echo "code builded and tested"
             }
         }
         stage("scan image"){
             steps{
-                echo 'image scanning ho gayi'
+                echo "image scanning ho gayi"
             }
         }
         stage("push"){
             steps{
-                withCredentials([usernamePassword(credentialsId:"dockerHub",passwordVariable:"dockerHubPass",usernameVariable:"dockerHubUser")]){
-                sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
-                sh "docker tag node-app-test-new:latest ${env.dockerHubUser}/node-app-test-new:latest"
-                sh "docker push ${env.dockerHubUser}/node-app-test-new:latest"
-                echo 'image push ho gaya'
-                }
+                echo "deployment ho gayi"
             }
         }
         stage("deploy"){
             steps{
                 sh "docker-compose down && docker-compose up -d"
-                echo 'deployment ho gayi'
+                echo "deployment ho gayi"
             }
         }
     }
